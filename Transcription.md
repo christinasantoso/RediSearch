@@ -28,15 +28,15 @@ One of the things I want to show-- You can see my little laser pointer, right? I
 [**SLIDE**] (2:29)
 ```
 **Data Lifecycle in RediSearch / Search and Aggregate**
-Create a schema using four types
-Text
-Numeric
-Tag
-Geospatial
-Add Documents in Real-Time
-Directly
-From hash
-Index only
++ Create a schema using four types
+	- Text
+	- Numeric
+	- Tag
+	- Geospatial
++ Add Documents in Real-Time
+	- Directly
+	- From hash
+	- Index only
 ```
 
 
