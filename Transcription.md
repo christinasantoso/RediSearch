@@ -13,9 +13,8 @@ So there are two [Inaudible 1.12] primary things we see people using it for, but
 
 
 [SLIDE] (1:28) 
-```
+
 ![alt text](Diagram.svg)
-```
 
 TRANSCRIPT
 
