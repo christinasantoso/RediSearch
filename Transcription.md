@@ -281,11 +281,9 @@ So we took a WIkipedia and wikipedia data set, it contains 5.6 million docs and 
 
 
 [**SLIDE**] (21:09)
-```
-RediSearch vs ElasticSearch : indexing time
-Diagram, gimana nulisnya?
-```
 
+**RediSearch vs ElasticSearch : indexing time**
+![Test](diagram-21:09.svg.svg)
 [**TRANSCRIPT**]
 
 And we got those research. So indexing, RediSearch indexes all the data in around 200 seconds compared to ElasticSearch that indexes the data in around 350 seconds, so RediSearch is around 58% faster.
