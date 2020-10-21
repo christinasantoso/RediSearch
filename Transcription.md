@@ -52,13 +52,13 @@ So let’s take a look, kinda little bit of overview on the query language. So s
 ```
 Query Language
 + Goals
-- Intentionally not SQL
-- But familiar
-- Exposable to end-users
+	- Intentionally not SQL
+	- But familiar
+	- Exposable to end-users
 + Simple
-- No knowledge of data / structure needed
+	- No knowledge of data / structure needed
 + Powerful
-- With knowledge, zero in on data
+	- With knowledge, zero in on data
 ```
 
 [**TRANSCRIPT**]
@@ -94,13 +94,13 @@ So let’s take a look at some of the things. We have-- you know, and, or, not a
 ```
 Full-text Search
 + Stop words:
-- “A fox in the woods” → “fox woods”
+	- “A fox in the woods” → “fox woods”
 + Stemming:
-- Query “going” → find “going” “go” “gone
+	- Query “going” → find “going” “go” “gone
 + Slop:
-- Query: “glass pitcher”, slop 2 → “glass beer pitcher”
+	- Query: “glass pitcher”, slop 2 → “glass beer pitcher”
 Matched text highlight/summary:
-- Query: “To be or not to be” → Hamlet. <b>To be, or not to be<b>-that is the question
+	- Query: “To be or not to be” → Hamlet. <b>To be, or not to be<b>-that is the question
 ```
 
 [**TRANSCRIPT**]
@@ -112,11 +112,11 @@ So from an example of what full-text search is, there’s a few things that you 
 ```
 Full-text Search
 + Synonyms
-- Query “Bob” → Find documents with “Robert”
+	- Query “Bob” → Find documents with “Robert”
 + Query Spell Check
-- “A fxo in the woods” → Did you mean “a fox in the woods”
+	- “A fxo in the woods” → Did you mean “a fox in the woods”
 + Phonetic Search
-- “John Smith” → “Jon Smyth”
+	- “John Smith” → “Jon Smyth”
 ```
 
 [**TRANSCRIPT**]
@@ -128,12 +128,12 @@ Scoring, Weight, and Sorting
 + Each field can have a weight which influences the rank in the returned result
 + Each document can have a score to influence rank
 + Built-in Scoring Functions
-- Default: TD-IDF / term frequency-invese document frequency
-- Variant: DOCNORM
-- Variant: BM25
-- DISMAX (Solr’s default)
-- DOCSCORE
-- HAMMING for binary payloads
+	- Default: TD-IDF / term frequency-invese document frequency
+	- Variant: DOCNORM
+	- Variant: BM25
+	- DISMAX (Solr’s default)
+	- DOCSCORE
+	- HAMMING for binary payloads
 + Fields can be independently sortable, which trumps any in-built scorer
 ```
 
@@ -161,25 +161,25 @@ So I want to go over aggregations, so not only you can find documents, you can a
 ```
 Grouping and Applications        
 + Reducers:
-- COUNT
-- COUNT_DISTINCT
-- COUNT_DISTINCTISH
-- SUM
-- MIN
-- MAX
-- AVG
-- STDDEV
-- QUANTILE
-- TOLIST
-- FIRST_VALUE
-- RANDOM_SAMPLE
+	- COUNT
+	- COUNT_DISTINCT
+	- COUNT_DISTINCTISH
+	- SUM
+	- MIN
+	- MAX
+	- AVG
+	- STDDEV
+	- QUANTILE
+	- TOLIST
+	- FIRST_VALUE
+	- RANDOM_SAMPLE
 + Manipulate:
-- Strings
-- substr(upper(‘hello world’).0.3 -> “HEL”
-- Numbers w/ Arithmetic
--  sqrt(log(foo) * floor (@bar/baz)) + (3^@qaz % 6)
-- Timestamp to Calendar
-- Timefmt (@mystimestamp. “%b %d %Y %H : %M : %S” ) -> Feb 24 2018     00:05:48
+	- Strings
+	- substr(upper(‘hello world’).0.3 -> “HEL”
+	- Numbers w/ Arithmetic
+	-  sqrt(log(foo) * floor (@bar/baz)) + (3^@qaz % 6)
+	- Timestamp to Calendar
+	- Timefmt (@mystimestamp. “%b %d %Y %H : %M : %S” ) -> Feb 24 2018     00:05:48
 ```
 
 [**TRANSCRIPT**]
@@ -191,8 +191,8 @@ Autocomplete/Suggestions
 + In the module, but separate storage
 + Radix trie-based, optimized for real-time, as-you-type completions
 + Simple API
-- Add a suggestion (FT.SUGADD)
-- Get a suggestion (FT.SUGGET)
+	- Add a suggestion (FT.SUGADD)
+	- Get a suggestion (FT.SUGGET)
 
                                                         [ r ]
                                                        /     \
@@ -203,13 +203,13 @@ Autocomplete/Suggestions
                                  [3]         [e]  [us]   [ns]  [r]   [on]  [undus]
  	 		          /        |        |      |      |          |
                                            [1]       [2]     [4]   [5]   [6]      [7]
-1. Romane
-2. Romanus
-3. Romulus
-4. Rubens
-5. Ruber
-6. Rubicon
-7. Rubicundus
+	1. Romane
+	2. Romanus
+	3. Romulus
+	4. Rubens
+	5. Ruber
+	6. Rubicon
+	7. Rubicundus
 ```
 
 [**TRANSCRIPT**]
@@ -375,10 +375,10 @@ Multi-site Active-Active Replication
 Consensus based Replication
 	A single instance needs to know that a majority of parties on an operation before applying it 
 	+ Advantage: 
-- Secured strong consistency
-- Known algorithms Paxos, Raft…
+		- Secured strong consistency
+		- Known algorithms Paxos, Raft…
 	+ Disadvantage:
-- Take time to reach an agreement (especially on a worldwide scale)
+		- Take time to reach an agreement (especially on a worldwide scale)
 ```
 
 [**TRANSCRIPT**]
@@ -390,8 +390,8 @@ So I will continue with CRDT, and first, before we start to talk about CRDTs and
 What is CRDT
 Conflict Free Replicated Data-Types
 + Consensus free technique that satisfy the “Eventual Consistency” properties
-- No need to coordinate with other parties in advance --> increases performance
-- Waiting long enough, all parties state will be aligned --> strong eventual consistency
+	- No need to coordinate with other parties in advance --> increases performance
+	- Waiting long enough, all parties state will be aligned --> strong eventual consistency
 
 INCRBY 5 --> Sync --> x=2 <-- Sync <-- DECRBY 3
 ```
