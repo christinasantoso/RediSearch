@@ -41,6 +41,7 @@ One of the things I want to show-- You can see my little laser pointer, right? I
 
 
 [**TRANSCRIPT**]
+
 So with a look like this-- you know, it’s a little bit different than what you usually have in Redis. There’s kind of a life cycle of data in RediSearch. So, the first thing you have to do that’s unusual, is you have to instantiate your schema in RediSearch. You have to go in and say I’m gonna here’s how my data is arranged and we use four primary types of text numeric, geo and tag and we’ll go over those a little bit more in detail later. So after you do this, just give you an overview so you’ll get a more little context. I will go over this now. Text is basically any type of human language, it is designed to work with things that you would say out of your own mouth or things you would read in a book. It is not optimized to be searching through skews or some other code or whatever, that’s not what it’s really designed for. So that’s the text type. It is not a string, right? Like there’s a distinction there. Numeric is numbers, right? And notice all of these don’t have any specific size to them, right? They’re whatever you want. You have tag which is-- the way I like to think about this, is this is a collection of data flags and so if you want to keep me to give you an example you would go to a grocery store and you want to have all the items in a grocery, with say “Is this item vegetarian? Is it vegan? Is it pescetarian? Is it kosher? Is it halal?”. Now one food item could be all five of these things, right? And maybe you have another category, gluten-free or something like that you want to add in. That’d be a great use for tags, right? So you could go and say give me all of that are-- you know-- gluten-free or vegan or whatever like that, so that’s how I like to think about that, it indicates the presence of something. And then geospatial is plotting things on a round world. So in that case-- you know, you can find the distance between points and points and radiuses and it’s actually just like the geo commands in Redis, said it is almost entirely borrowed from that. So you know it only works on a round earth ...(4:49)I’m sorry the map won’t work out for you.
 So,--Oops wrong the way. So after you create your schema you have to add documents, right? You can add documents directly from a hash in certain circumstances, you can add it directly or form a hash, so it creates an HSET with your hash object, the hash map. And then the other interesting thing that I like to point out is that you can add documents without storing them. In that way you’re only indexing the document. So instead of returning back a document that has fields and values, it would just give you a document ID, okay? So you create your schema and then you can add documents, and it’s you can add documents in real-time, so at any point you can add documents, so this order is not exactly sequential. After you have documents you can search and aggregate on those documents, and at any point, you can add more documents. Then you can delete documents as needed, so you can delete documents at any point and it doesn’t affect re-indexing or anything like that, it’s very efficient to do so. At any point, you can drop the whole index as well and just say I’m done with this index, and let’s move on. 
 
@@ -62,6 +63,7 @@ Query Language
 ```
 
 [**TRANSCRIPT**]
+
 And you can give a query lang like a query that is very simple like this. Oh shoot, I want to go over a couple of things. I went over some of these. We’re not intentionally sequels, like the reason it’s not a sequel is people get itchy and they write full page queries and sequels like it’s different, right? The other thing, is that it’s familiar enough that you can probably look at it and go, okay I’ve done something similar in the past and exposable to end-users. There’s no management functions, you can’t drop indexes or do anything from this, this is only for finding documents. You can’t add documents or anything like this. It needs to be simple enough where no knowledge is required, but an easy powerful enough to kind of go deep and find anything that you want in the data.
 
 [**SLIDE**] (6:37)
@@ -71,6 +73,7 @@ Ford Truck
 ```
 
 [**TRANSCRIPT**]
+
 So here’s the query I wanted to talk to you about. So you have this list of cars that you’re trying to find. This is a completely valid RediSearch query for truck that would find (inaudible 6:45) ford trucks. But it goes way beyond that. 
 
 [**SLIDE**] (6:54)
@@ -86,6 +89,7 @@ Good | very good }
 ```
 
 [**TRANSCRIPT**]
+
 So let’s take a look at some of the things. We have-- you know, and, or, not are the kind of-- you know, operations you would expect, exact phrase, matching, geospatial, tags, we talked about prefix searching, number ranges, optional terms, and more. Let’s go over those in the example, because those are abstract, and don't mean a lot. So if you have this, we’re getting more looking at used cars, we’re gonna look for Chev and this is an asterix here which would indicate a prefix search and that would find Chevy, or Chevrolet, or Chev X, or something like that. And then we have this pipe character, and this pipe character represents “or”, so, ford. The parents are for groupings, so this needs to find prefix Chev or Ford, so that is one pairing. We have a negative option, so we don’t want to find an explorer, if an explorer is present in the documents, we will exclude it from search. We have this tilde, which is optional, I think that’s one of the more interesting ones. Optional says “hey if a truck is present, that’s good, boosted in its rankings,” right? So it’ll appear higher in the search result than the equal one that doesn’t contain it. Then we’re gonna go into a field based search. So in this case we have a field called “year”, you probably know what that represents. We’re gonna search between 2001 and 2011 and that would be inclusive. Then we’re gonna do a geospatial, so location and we’d use long lat, and then the radius. So in this case we’re finding 74 x 40 within a 100 kilometer radius. So that would find it within the-- I think that’s around New York City. And then we’re doing our optional or our tags, so the condition is saying good or very good in that case. So that’s a pretty deep query you can keep on iterating on and find more and more things.
 
 
@@ -104,6 +108,7 @@ Matched text highlight/summary:
 ```
 
 [**TRANSCRIPT**]
+
 So from an example of what full-text search is, there’s a few things that you need to keep in mind. We do a bit of pre-processing to the documents and the search queries. So if you’re familiar with the term stop words, this eliminates things from the both query and from the document that are so frequent in text that they are useless, and I’m using English examples, RediSearch can support many languages in a couple different ways and you can specify your own and all that stuff. But in this case you have, maybe a document as “a fox in the woods”, RediSearch will look at that and say “a” and “in the” are so frequent in the corpus, that we no longer need them, so there are stop words where they are removed. Then we’re going to look at stemming. So effectively with stemming what you’re doing is you’re finding like the root word, it’s not exactly the root word from a linguistic point of view, but it finds a deterministic way of shortening a word, based on a language that it’s interpreted in. So “going” would also match “going” obviously, but “go” and “gone” as well. Then we look at slop, slop is one of the weird things, I love the naming of it, I don’t think this is exactly in this industry term, it’s not used in all search engines, but in this case it’s saying “hey let's jump over a couple of words”. So we want to find a glass beer, a glass pitcher, and we indicated a slop of two and we’re gonna say “let’s actually hop over that”, so “glass pitcher” would match “glass gallon beer pitcher”, so there’s two intervening words here. Then we’ll look at with or without the content. So if you had all of Shakespeare’s works and you searched to be or not to be, do you want to return all of hamlet? You probably don’t. So in that case we would just say let’s just get the ID so that would be hamlet, and then if you want to find more maybe that’s not enough, you want to see the passage in which that’s in, there’s two features we have: highlighting and summary. In this case we would go say okay to be or not to be as our query and then highlighting is gonna put in some tags, these are HTML tags. You can specify it to be anything you want to, but we’re using a B tag here, it just surrounds the phrase or the matched phrase, so it’s surrounding that and notice that it’s also skipping over any like comments or commas, or punctuation, and it’s getting kind of a fragment around it and that’s what we call our summarization feature.
 
 
@@ -120,6 +125,7 @@ Full-text Search
 ```
 
 [**TRANSCRIPT**]
+
 So more things about full-text search: synonyms. You can specify synonyms, so you’d find-- if you put it for “Bob” you’d find “Robert” as an example, you specify your own and before that you can take a look at it. Then we have spell check and that will do a levenshtein distance of one. So if you went in and said ”a fxo in the woods” it would say “did you mean “a fox in the woods”?”, that sort of use case. And finally Phonetic search, the next searches are really things that people get excited about, but I want to warn you that it's really dangerous, I say this to everybody because they think this is the best thing in the world, but it is very useful in certain circumstances but not in all circumstances. In this case, Jon Smyth, doesn’t actually represent a character John Smith over here but they sound the same. So it uses-- it decomposes the words into a phonetic representation. That’s great if all your documents are in the same language. If you have documents that are in multiple languages and you try to do phonemic search, everything goes crazy. So I’ll give you the example of a phonetic problem. I live in Canada and if I type in Toronto it will also match the city trent, they don’t look anything alike. But Toronto is a native American term, it doesn’t follow English Language patterns, so it actually gets decomposed into trent. It would be TR NT, I think, this Redis decomposes it into. So if you have something that’s very consistent, it’s great. If you’re using stuff like place names, you know, Milwaukee, Kentucky, these things don’t actually follow English language words. So be careful with that but it is useful in a lot of situations. So once you’ve something maybe you want to go in and actually sort the values in the returned documents.
 
 [**SLIDE**] (12:31)
@@ -138,6 +144,7 @@ Scoring, Weight, and Sorting
 ```
 
 [**TRANSCRIPT**]
+
 So each field can have what’s called a weight, this actually influences the importance of the fields in the document and where it is returned. So a higher weighted thing would be returned higher if there is a match for that. Then each document itself can have a score and that represents the overall quality of it, so if you have a document it’ll represents between zero and a one number, so if you have for example a document with a score of one that’s a very strong indication that it is a quality document, if it has a point zero one it is a very low quality document and it will influence how everything is ranked in its conditions. Then we have a few built in scoring functions by default. We use TF-IDF term frequency- inverse document frequency which is a fascinating algorithm, I suggest if you don’t know much about it, take some reads on it, it's really nice. Take some time on Saturday night and read about this algorithm, I did, I was surprised at how much I acquired from this. And there’s some variants, we have DOCNORM which was normalized as the document scores but it then does TF-IDF on it. Then BM25, which is another variant. There’s DISMAX, if you’re using solr that’s what they use as default, it’s a different ranking algorithm. And then you can look at raw DOCSCORE and HAMMING distance and we have this concept of binary payloads. I don’t know anybody who uses this, I’d love to see a use case for it, but you can do other things too. You can define your own scoring functions as well, so there’s a lot of options here.
 
 
@@ -154,6 +161,7 @@ Aggregations
 ```
 
 [**TRANSCRIPT**]
+
 So I want to go over aggregations, so not only you can find documents, you can also aggregate. So in this case let’s take a look at aggregations, basically the process and transfor, it uses the same query language as the rest of RediSearch, and you can group, sort, apply, and transform to create the right pipeline. So you can follow these composible actions, this is an example, I show this because it does apply a transformation twice and you can do reductions as well. It’ll make more sense later on as I go through an example.
 
 
@@ -183,6 +191,7 @@ Grouping and Applications
 ```
 
 [**TRANSCRIPT**]
+
 So in this we’ll look at all of our reducers. This is-- some of these look pretty familiar, my favourite is count_distinctish which trades off some performance for accuracy, so it’s a lot faster to use probabilistic data structures internally, but you can see you’re doing counts and the normal things. You can manipulate strings internally, so you can actually create an expression to do all sorts of things that you might be used to, and they have this little expression language, you can do arithmetic in the same way on numeric fields, and then we actually understand time, which is kind of the first place in Redis that understands time, it takes a unix timestamp and you can format it and get outputs out of it. So, pretty interesting stuff.
 
 [**SLIDE**] (15:31)
@@ -230,6 +239,7 @@ FT.AGGREGATE shipments “@box_area:[300 +inf]”
 ```
 
 [**TRANSCRIPT**]
+
 Okay, I want to quickly bring something up, apologies for switching and then Meir will take over in just a moment. So I want to show you, I missed a slide here when I crafted this. So this is an aggregation example and this is a very kind of end to end example of how aggregations work, but also we can show the query. So we’re gonna start here. FT.AGGREGATE is the command, what if I was to change it to FT.SEARCH this would be a completely valid search. So in this case I’m looking for box area which is a numeric between 300 and positive infinity, so 300 and above, right? Let’s add something to this. So that’s not returned all of the boxes that have a total area of 300 or above, and that’s just what I’ve stored in my document before. So I wanna apply something here, so I’m gonna go in and say I have a shipment time stamp, right? Let’s say that’s a second precision timestamp instead of-- or a millisecond precision timestamp instead of a second precision. So I’m gonna go and divide that by a thousand and then apply the year filter and I’m going to store that as a shipment year, right? So in that case you would be, you know you had at some timestamp it would then come out as 2019, useful. I’m gonna group that by shipment year, so I’m group by and there’s a pattern here that’s common, the what RediSearch uses is a kind of prefix notation. So this one means I have one argument coming related to this. So one thing, so grouping by shipment year, then I’m gonna reduce and count has zero arguments as shipment counts. So that’s gonna say in the shipment year, how many 2019 are there, right? I’m gonna sort that by a shipment count and that has two arguments shipment count and that’s in descending order. So in that case, I'm gonna say okay 2019, 18, 17, and so on and so forth. I’m gonna limit it to effort--it just a few items and then when I apply a transformation that’s kind of complicated here. So I’m taking the shipments as you can see I can sub this in with kind of pearl-like syntax, so I’m taking the floor of the shipment count dividing it by thousand, so I want to say like 10k shipment, right? That sort of thing, that’s where this K+ comes from. Some just saying 10,000 or more shipments and that’s that. So you can see how you can create this whole pipeline of aggregations here. So at that point I’m gonna hand it over to Meir and he’s gonna go over CRDTs and how they affect search and a benchmark as well. Great, okay, so we’re gonna switch laptops just a moment.
 
 [**SLIDE**] (20:12)
@@ -241,6 +251,7 @@ Agenda:
 ```
 
 [**TRANSCRIPT**]
+
 So thank you Kyle, my name is Meir and I’m one of the maintainers of RediSearch. Mark is here with me, Mark there is the--also one of the maintainers of RediSearch together. Well, developing RediSearch and today I wanna talk to you about two things, one is the-- to show you a RediSearch benchmark that we did recently, and the second is how RediSearch and CRDT can cooperate in order to achieve an active-active search engine. So let’s get started.
 So as I said we will start with some benchmark that we did recently then we will talk a little about CRDT and what CRDT are, and then we will talk how search and CRDT can cooperate and we will see a cool demo of how it’s working.
 
@@ -416,11 +427,13 @@ Diagram, gimana nulisnya?
 ```
 
 [**TRANSCRIPT**]
+
 So how CRDT & RediSearch can cooperate in order to achieve an active-active search engine? So this is how it’s happened and-- Okay, so when you do an FT.ADD command you want to add the data to your index. The data is index on the replica on which you do the FT.ADD and then it’s written into a hash. Once it’s written into a hash then the CRDT knows how to replicate this hash to the other replica, the data is replicated too. For example, here’s site 2, and then once the data is replicated and all the conflicts are solved by the CRDT engine then the CRDT notifies the RediSearch on site 2 that the new data has arrived and it needs to be indexed, then RediSearch indexes this data on site 2 and when you do a search, a query, on both replicas you’ll get the same results.
 
 [DEMO] (29:19)
 
 [**TRANSCRIPT**]
+
 Okay, so we will see a demo on how it’s working. So what we have here is this, at the lower we see the connection between replica 1 and replica 2, on the left side we see replica 1, on the right side we see replica 2. So let’s start it. As I said this will be replica 1 and this is replica 2. Now what we’re gonna do first is we’re gonna do an FT.ADD command on replica 1, we’re gonna add the data on replica 1 and we’re gonna search for this data on replica 2. We’re adding the-- on field test we’ll add the name Hana, let’s do it. So we got an OK reply and you can immediately see that the data was replicated from replica 1 to replica 2. And now when we search for it we will get Hana on replica 2. Let’s do it the other way around, let’s add data on replica 2 and search for it on replica 1. So we add Danny, we got an OK reply, we see that the value was replicated and then when we search for it on replica 1, we find it. Let’s now make it a little bit complicated and instead of adding data we will update an existing data, so what we’re doing here we’re updating document 2 and we’re changing the field test to Peter. So let’s do it. We got an OK reply and we see that Peter was replicated. So let’s search for Peter on replica 2 and we see that we can find it. Now the last thing we’re gonna do is we’re gonna complicated even more. We’re gonna update document 2 on the two replicas at the same time and we’re gonna break the connection during the update. So we’ll actually cause a CRDT conflict. So let’s stop the connection. Okay. And now we’re gonna update, we’re gonna update replica 2 first 
 With the value Michelle and replica 1 second with the value of Jim. Now if we search for Jim on replica 1 we will find it and if we search for Michelle on replica 2 we will also find it. But they’re not synced, right? Because the connection is broken, they couldn’t, they cannot sync. So let’s return the connection and we can see immediately the value was propagating between the replicas and now if we search on both replicas for Jim, we can find it. And this is how CRDT and search can work together and give you an active-active search engine.
 
