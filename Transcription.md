@@ -51,14 +51,14 @@ So let’s take a look, kinda little bit of overview on the query language. So s
 [**SLIDE**] (5:55)
 ```
 Query Language
-Goals
-Intentionally not SQL
-But familiar
-Exposable to end-users
-Simple
-No knowledge of data / structure needed
-Powerful
-With knowledge, zero in on data
++ Goals
+- Intentionally not SQL
+- But familiar
+- Exposable to end-users
++ Simple
+- No knowledge of data / structure needed
++ Powerful
+- With knowledge, zero in on data
 ```
 
 [**TRANSCRIPT**]
@@ -93,14 +93,14 @@ So let’s take a look at some of the things. We have-- you know, and, or, not a
 [**SLIDE**] (8:39)
 ```
 Full-text Search
-Stop words:
-“A fox in the woods” → “fox woods”
-Stemming:
-Query “going” → find “going” “go” “gone
-Slop:
-Query: “glass pitcher”, slop 2 → “glass beer pitcher”
++ Stop words:
+- “A fox in the woods” → “fox woods”
++ Stemming:
+- Query “going” → find “going” “go” “gone
++ Slop:
+- Query: “glass pitcher”, slop 2 → “glass beer pitcher”
 Matched text highlight/summary:
-Query: “To be or not to be” → Hamlet. <b>To be, or not to be<b>-that is the question
+- Query: “To be or not to be” → Hamlet. <b>To be, or not to be<b>-that is the question
 ```
 
 [**TRANSCRIPT**]
@@ -111,12 +111,12 @@ So from an example of what full-text search is, there’s a few things that you 
 [**SLIDE**] (10:55)
 ```
 Full-text Search
-Synonyms
-Query “Bob” → Find documents with “Robert”
-Query Spell Check
-“A fxo in the woods” → Did you mean “a fox in the woods”
-Phonetic Search
-“John Smith” → “Jon Smyth”
++ Synonyms
+- Query “Bob” → Find documents with “Robert”
++ Query Spell Check
+- “A fxo in the woods” → Did you mean “a fox in the woods”
++ Phonetic Search
+- “John Smith” → “Jon Smyth”
 ```
 
 [**TRANSCRIPT**]
@@ -125,16 +125,16 @@ So more things about full-text search: synonyms. You can specify synonyms, so yo
 [**SLIDE**] (12:31)
 ```
 Scoring, Weight, and Sorting
-Each field can have a weight which influences the rank in the returned result
-Each document can have a score to influence rank
-Built-in Scoring Functions
-Default: TD-IDF / term frequency-invese document frequency
++ Each field can have a weight which influences the rank in the returned result
++ Each document can have a score to influence rank
++ Built-in Scoring Functions
+- Default: TD-IDF / term frequency-invese document frequency
 - Variant: DOCNORM
 - Variant: BM25
 - DISMAX (Solr’s default)
 - DOCSCORE
 - HAMMING for binary payloads
-Fields can be independently sortable, which trumps any in-built scorer
++ Fields can be independently sortable, which trumps any in-built scorer
 ```
 
 [**TRANSCRIPT**]
@@ -144,10 +144,10 @@ So each field can have what’s called a weight, this actually influences the im
 [**SLIDE**] (14:12)
 ```
 Aggregations
-Processes and transforms
-Same query language as search
-Can group, sort and apply transformations
-Follows pipeline of compostable actions:
++ Processes and transforms
++ Same query language as search
++ Can group, sort and apply transformations
++ Follows pipeline of compostable actions:
 [Follow] --> [Group] --> [Apply] --> [Sort] --> [Apply]
                         |_ [Reduce]
 
@@ -160,25 +160,25 @@ So I want to go over aggregations, so not only you can find documents, you can a
 [**SLIDE**] (14:39)
 ```
 Grouping and Applications        
-Reducers:
-COUNT
-COUNT_DISTINCT
-COUNT_DISTINCTISH
-SUM
-MIN
-MAX
-AVG
-STDDEV
-QUANTILE
-TOLIST
-FIRST_VALUE
-RANDOM_SAMPLE
-Manipulate:
-Strings
++ Reducers:
+- COUNT
+- COUNT_DISTINCT
+- COUNT_DISTINCTISH
+- SUM
+- MIN
+- MAX
+- AVG
+- STDDEV
+- QUANTILE
+- TOLIST
+- FIRST_VALUE
+- RANDOM_SAMPLE
++ Manipulate:
+- Strings
 - substr(upper(‘hello world’).0.3 -> “HEL”
-Numbers w/ Arithmetic
+- Numbers w/ Arithmetic
 -  sqrt(log(foo) * floor (@bar/baz)) + (3^@qaz % 6)
-Timestamp to Calendar
+- Timestamp to Calendar
 - Timefmt (@mystimestamp. “%b %d %Y %H : %M : %S” ) -> Feb 24 2018     00:05:48
 ```
 
@@ -188,11 +188,11 @@ So in this we’ll look at all of our reducers. This is-- some of these look pre
 [**SLIDE**] (15:31)
 ```
 Autocomplete/Suggestions
-In the module, but separate storage
-Radix trie-based, optimized for real-time, as-you-type completions
-Simple API
-Add a suggestion (FT.SUGADD)
-Get a suggestion (FT.SUGGET)
++ In the module, but separate storage
++ Radix trie-based, optimized for real-time, as-you-type completions
++ Simple API
+- Add a suggestion (FT.SUGADD)
+- Get a suggestion (FT.SUGGET)
 
                                                         [ r ]
                                                        /     \
@@ -203,13 +203,13 @@ Get a suggestion (FT.SUGGET)
                                  [3]         [e]  [us]   [ns]  [r]   [on]  [undus]
  	 		          /        |        |      |      |          |
                                            [1]       [2]     [4]   [5]   [6]      [7]
-Romane
-Romanus
-Romulus
-Rubens
-Ruber
-Rubicon
-Rubicundus
+1. Romane
+2. Romanus
+3. Romulus
+4. Rubens
+5. Ruber
+6. Rubicon
+7. Rubicundus
 ```
 
 [**TRANSCRIPT**]
@@ -235,9 +235,9 @@ Okay, I want to quickly bring something up, apologies for switching and then Mei
 [**SLIDE**] (20:12)
 ```
 Agenda:
-RediSearch Benchmark
-What is CRDT?
-Search & CRDT
+1. RediSearch Benchmark
+2. What is CRDT?
+3. Search & CRDT
 ```
 
 [**TRANSCRIPT**]
@@ -260,8 +260,8 @@ So, first we will start with benchmark. So, recently we did a benchmark of RediS
 [**SLIDE**] (20:58)
 ```
 Dataset
-Indexing of a wikipedia dataset: 5.6 docs @5GB
-Date of dump: Feb 7. 2019
++ Indexing of a wikipedia dataset: 5.6 docs @5GB
++ Date of dump: Feb 7. 2019
 ```
 
 [**TRANSCRIPT**]
@@ -302,11 +302,11 @@ The second use case that we did is called-- we call it Multi-Tenant. So for exam
 [**SLIDE**] (22:40)
 ```
 What is a multi-tenant search?
-Serving a multi-tenant application
-Each tenant has its own dedicated and isolated search index
-Number of docs per index - 500
-Total number of tenants - 50k
-Total number of indexed documents - 25M
++ Serving a multi-tenant application
++ Each tenant has its own dedicated and isolated search index
++ Number of docs per index - 500
++ Total number of tenants - 50k
++ Total number of indexed documents - 25M
 ```
 
 [**TRANSCRIPT**]
@@ -326,10 +326,10 @@ The result is that RediSearch could’ve indexed all these data, create all thos
 [**SLIDE**] (23:06)
 ```
 Multi-tenant Results
-Natively in memory (*ElasticSearch was running with cache enabled)
-C (RediSearch) vs, Java (ElasticSearch)
-Extremely optimized built from the ground-up search engine vs, less optimized 20yro Lucene search engine
-Redis RESP light protocol vs ElasticSearch HTTP based protocol
++ Natively in memory (*ElasticSearch was running with cache enabled)
++ C (RediSearch) vs, Java (ElasticSearch)
++ Extremely optimized built from the ground-up search engine vs, less optimized 20yro Lucene search engine
++ Redis RESP light protocol vs ElasticSearch HTTP based protocol
 ```
 
 [**TRANSCRIPT**]
@@ -339,7 +339,7 @@ So we believe that the comparison and the differences is because: First, RediSea
 [**SLIDE**] (24:21)
 ```
 Setup
-Client & Server - AWS c4.8xlarge (36 vCPU and 60GB RAM)
++ Client & Server - AWS c4.8xlarge (36 vCPU and 60GB RAM)
 Diagram, gimana nulisnya?
 ```
 [**TRANSCRIPT**]
@@ -350,14 +350,14 @@ So those are the machines that were used to compare to do the benchmark.
 ```
 Configuration Settings
 Elasticsearch:
-Shards: 5
-JVM settings (Xms and Xmx)
-Indices.memory.index_buffer_size
-Index.refresh_interval (triggers flushes)
-Index.number_of_replicas
++ Shards: 5
++ JVM settings (Xms and Xmx)
++ Indices.memory.index_buffer_size
++ Index.refresh_interval (triggers flushes)
++ Index.number_of_replicas
 RediSearch:
-Doc table size 10M
-No threads concurrency (handle using enterprise cluster)
++ Doc table size 10M
++ No threads concurrency (handle using enterprise cluster)
 ```
 
 [**TRANSCRIPT**]
@@ -374,11 +374,11 @@ Multi-site Active-Active Replication
 
 Consensus based Replication
 	A single instance needs to know that a majority of parties on an operation before applying it 
-	Advantage: 
-Secured strong consistency
-Known algorithms Paxos, Raft…
-	Disadvantage:
-Take time to reach an agreement (especially on a worldwide scale)
+	+ Advantage: 
+- Secured strong consistency
+- Known algorithms Paxos, Raft…
+	+ Disadvantage:
+- Take time to reach an agreement (especially on a worldwide scale)
 ```
 
 [**TRANSCRIPT**]
@@ -389,9 +389,9 @@ So I will continue with CRDT, and first, before we start to talk about CRDTs and
 ```
 What is CRDT
 Conflict Free Replicated Data-Types
-Consensus free technique that satisfy the “Eventual Consistency” properties
-No need to coordinate with other parties in advance --> increases performance
-Waiting long enough, all parties state will be aligned --> strong eventual consistency
++ Consensus free technique that satisfy the “Eventual Consistency” properties
+- No need to coordinate with other parties in advance --> increases performance
+- Waiting long enough, all parties state will be aligned --> strong eventual consistency
 
 INCRBY 5 --> Sync --> x=2 <-- Sync <-- DECRBY 3
 ```
@@ -404,10 +404,10 @@ Now what CRDT provides? It provides a different property that calls the eventual
 ```
 RediSearch & CRDT
 RediSearch and CRDB (Redis CRDT) --> a Multi-site Active-Active search engine
-RediSearch (FT.ADD) saves the raw data as a Hash.
-CRDT replicates the Hash between the sites.
-On Hash received, CRDT notifies RediSearch causing new data reindex.
-Only after conflicts being resolved by CRDT, RediSearch is being notified.
++ RediSearch (FT.ADD) saves the raw data as a Hash.
++ CRDT replicates the Hash between the sites.
++ On Hash received, CRDT notifies RediSearch causing new data reindex.
++ Only after conflicts being resolved by CRDT, RediSearch is being notified.
 
 Ft.add idx doc name Danny --> [site 1] RediSearch <-- hset doc1 name Danny --> CRDT
 [site 2] RediSearch <-- notification on new data arrived --> CRDT
@@ -423,3 +423,4 @@ So how CRDT & RediSearch can cooperate in order to achieve an active-active sear
 [**TRANSCRIPT**]
 Okay, so we will see a demo on how it’s working. So what we have here is this, at the lower we see the connection between replica 1 and replica 2, on the left side we see replica 1, on the right side we see replica 2. So let’s start it. As I said this will be replica 1 and this is replica 2. Now what we’re gonna do first is we’re gonna do an FT.ADD command on replica 1, we’re gonna add the data on replica 1 and we’re gonna search for this data on replica 2. We’re adding the-- on field test we’ll add the name Hana, let’s do it. So we got an OK reply and you can immediately see that the data was replicated from replica 1 to replica 2. And now when we search for it we will get Hana on replica 2. Let’s do it the other way around, let’s add data on replica 2 and search for it on replica 1. So we add Danny, we got an OK reply, we see that the value was replicated and then when we search for it on replica 1, we find it. Let’s now make it a little bit complicated and instead of adding data we will update an existing data, so what we’re doing here we’re updating document 2 and we’re changing the field test to Peter. So let’s do it. We got an OK reply and we see that Peter was replicated. So let’s search for Peter on replica 2 and we see that we can find it. Now the last thing we’re gonna do is we’re gonna complicated even more. We’re gonna update document 2 on the two replicas at the same time and we’re gonna break the connection during the update. So we’ll actually cause a CRDT conflict. So let’s stop the connection. Okay. And now we’re gonna update, we’re gonna update replica 2 first 
 With the value Michelle and replica 1 second with the value of Jim. Now if we search for Jim on replica 1 we will find it and if we search for Michelle on replica 2 we will also find it. But they’re not synced, right? Because the connection is broken, they couldn’t, they cannot sync. So let’s return the connection and we can see immediately the value was propagating between the replicas and now if we search on both replicas for Jim, we can find it. And this is how CRDT and search can work together and give you an active-active search engine.
+
