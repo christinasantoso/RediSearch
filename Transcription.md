@@ -202,15 +202,7 @@ Autocomplete/Suggestions
 	- Get a suggestion (FT.SUGGET)
 ```
 ![test](1531.svg)
-```
-	1. Romane
-	2. Romanus
-	3. Romulus
-	4. Rubens
-	5. Ruber
-	6. Rubicon
-	7. Rubicundus
-```
+
 
 [**TRANSCRIPT**]
 
@@ -419,7 +411,7 @@ RediSearch and CRDB (Redis CRDT) --> a Multi-site Active-Active search engine
 
 So how CRDT & RediSearch can cooperate in order to achieve an active-active search engine? So this is how it’s happened, so when you do an FT.ADD command you want to add the data to your index. The data is index on the replica on which you do the FT.ADD and then it’s written into a hash. Once it’s written into a hash then the CRDT knows how to replicate this hash to the other replica, the data is replicated too. For example, here’s site 2, and then once the data is replicated and all the conflicts are solved by the CRDT engine then the CRDT notifies the RediSearch on site 2 that the new data has arrived and it needs to be indexed, then RediSearch indexes this data on site 2 and when you do a search, a query, on both replicas you’ll get the same results.
 
-[DEMO] (29:19)
+[**DEMO**] (29:19)
 
 [**TRANSCRIPT**]
 
