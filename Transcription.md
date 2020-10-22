@@ -428,75 +428,90 @@ Okay, so we will see a demo on how it’s working. So what we have here is this,
 [**Discussion**]
 If you have any questions i’ll be happy to answer. We have like 10 minutes, so go ahead.
 
-[**Audience 1**] : I have a question on CRDT in general. So in the other session I saw that there was a checkmark for causal consistency. So when I read the documents about causal consistency it says that it would add some memory overhead and performance over it as well, so I want to know what that is. That’s question number 1.
+**Audience 1** : I have a question on CRDT in general. So in the other session I saw that there was a checkmark for causal consistency. So when I read the documents about causal consistency it says that it would add some memory overhead and performance over it as well, so I want to know what that is. That’s question number 1.
 The question number 2 is the other session also was able to show that there was a separate process called the syncer which is actually doing the syncing. So if I have to install a syncer which is going to sit in between two active-active connections then would it have any memory impact, is it going to buffer up a lot of data before it syncing into
 
-[**Meir**] : I’ll answer. So we got in the first question about causal consistency. Who knows here what causal consistency is? Who have ever heard about it? Oh, not a lot of. Okay so I'll try to explain it the way that I can. so what causal consistency is, let's talk for example three instances. Like I am the first instance, you are the second and you are the third and let's assume that I am updating a value x to 4. Now i'm propagating the data and now you are updating the same value, the same x but you decide to update it only if you see it, if you see that the value is 4. If you do not see that the value is four you do not change it. Let's assume we change it to 5. Now your change is propagated to everyone and it could be that this propagation the second a propagation has arrived to replica free to instance free before we saw that I changed the value to 4. Now this is an intermediate state right that might cannot have a call in your application because you do not expect to see five if you didn't see four before, right? So if your application is okay with it then you don't need causal consistency, but if your application is not okay with it and we can find we or we can think of use cases as well where this is not okay, those intermediate states are not something that you can accept, then you need causal consistency. Now causal consistency might increase memory usage, it might increase the network usage, but in case you need it then there is no other way you must use it. So this is what causal consistency is. I'm not sure that all the use cases will need causal consistency, but I do think of some use cases that you really need it. So this is why we decided to implement it and this is why we also decided to make it optional. So you will be able to choose whether you want it or you don't want.
+**Meir** : I’ll answer. So we got in the first question about causal consistency. Who knows here what causal consistency is? Who have ever heard about it? Oh, not a lot of. Okay so I'll try to explain it the way that I can. so what causal consistency is, let's talk for example three instances. Like I am the first instance, you are the second and you are the third and let's assume that I am updating a value x to 4. Now i'm propagating the data and now you are updating the same value, the same x but you decide to update it only if you see it, if you see that the value is 4. If you do not see that the value is four you do not change it. Let's assume we change it to 5. Now your change is propagated to everyone and it could be that this propagation the second a propagation has arrived to replica free to instance free before we saw that I changed the value to 4. Now this is an intermediate state right that might cannot have a call in your application because you do not expect to see five if you didn't see four before, right? So if your application is okay with it then you don't need causal consistency, but if your application is not okay with it and we can find we or we can think of use cases as well where this is not okay, those intermediate states are not something that you can accept, then you need causal consistency. Now causal consistency might increase memory usage, it might increase the network usage, but in case you need it then there is no other way you must use it. So this is what causal consistency is. I'm not sure that all the use cases will need causal consistency, but I do think of some use cases that you really need it. So this is why we decided to implement it and this is why we also decided to make it optional. So you will be able to choose whether you want it or you don't want.
 
 Now regarding the syncer, yes, when you use the CRDT, the syncer is automatically set up and sync from all the replicas, you don't have to worry about it. I mean you as the user it's automatic and is all behind the scene. If you’re asking regarding the memory usage of the syncer it's not that significant, it's not something that you will probably feel. So I guess as a user it's fine, you don't really need to worry about it.
 
  
-
-[**Audience 2**] : I had a question on the previous topic. So when you are accreting indexes on the search for the search engine, is the index local to a specific shot(?) or is it across different instances of your [Inaudible 36:29]?
-
-[**Meir**] : So in the multi-tenant?
-Yeah.
-
-[**Audience**] : Multi-tenant or either
-
-[**Meir**] : Okay, so I will answer, in the multi-tenant case  the index was very small, like 500 docs each index so there was no point of distributing it between shots(?). But if your index is large then we do support distributing it and we do distribute it around the shot(?) because it makes no sense putting all the documents in a single shot(?), it will just take too much memory. So we do distribute the index between the shots(?).
-
-[**Audience 2**] : And have you ever done any benchmarking on the performance compared to say ElasticSearch in those cases?
-
-[**Meir**] : The first scenario in which we had only one index with many many document then it was distributed between the shots, yes.
-
-[**Audience 3**] : About the search, is the levenshtein distance configurable?
-
-[**Meir**] : What? The Levenshtein distance? So it's not configurable but you can play with it, like if you put like between two percentage, like if you put two percentage that’ll distance 1, if you put more or if you put 2 on the both sides then it will be levenshtein distance on 2 and we also support levenshtein distance of 3, but not more than that, up to three. 
-
-[**Audience 3**] : Okay, and what you're using for the spell checking? Can you support phrases? I mean if two words are wrong on the phrase.
-
-[**Meir**] : No, it’s a single word for the spell check.
-
-[**Audience 3**] : Thank you.
-
-[**Audience 4**] : Hi, in the example of CRDT, you added 5 and reduced 3 which is kind of unimportant, but what if you add 5 and multiply by 3 do you support those kinds of conflict solutions?
-
-[**Meir**] : There is no command for multiply in Redis, but you might ask what happen if I add three and then set another value. So you should have come to the previous lecture about CRDT and I would have answered all of your questions there. If you want to talk about person because it's like a long answer and maybe with some of you already have those answers. Basically it's conflict resolved so each data type solve the conflict differently. If you want to know a specific on how we handle conflicts in a specific data type then we can talk personally and I will explain to you.
-
-[**Audience 4**] : Okay.
-
-[**Audience 4**] : To the release database you have setup, is it exclusive to a search or you can also have the standard redis data structure, for example if you say "set my string to ABCD", will it give an error or ft.search? Right now I'm thinking if we already have a CRDT setted up, we just using it for standarting, If I want to ft.search do it is it possible?
  
-[**Meir**] : So I'll answer, it's possible to add a search to CRDT, but it’s not using a simple strings. So you must have your data in a hash in order for search to search on it and you must index the data [inaudible 40:26] like with the FTL command, so the RediSearch will know it's there and it will index the data. So you cannot index a simple string or a simple list. The data type that we support and provide is hashes. Is this answer okay? or you have more questions?
 
-[**Audience 4**] : (**mostly inaudible**) I understand that,Rightnow that every set already being used for a set of data, so I want to search a small thing in the synced data base
+**Audience 2** : I had a question on the previous topic. So when you are accreting indexes on the search for the search engine, is the index local to a specific shot(?) or is it across different instances of your [Inaudible 36:29]?
 
-[**Meir**] : So you have a database for CRDT?
+**Meir** : So in the multi-tenant?
 
-[**Audience 4**] : CRD database we already have, issues for example section cash.
+**Audience 2** : Multi-tenant or either
 
-[**Meir**] : So you probably need to upgrade to, I mean I'm not sure you have enterprise
+**Meir** : Okay, so I will answer, in the multi-tenant case  the index was very small, like 500 docs each index so there was no point of distributing it between shots(?). But if your index is large then we do support distributing it and we do distribute it around the shot(?) because it makes no sense putting all the documents in a single shot(?), it will just take too much memory. So we do distribute the index between the shots(?).
 
-[**Audience 4**] : Yes, yea, Redislab
+**Audience 2** : And have you ever done any benchmarking on the performance compared to say ElasticSearch in those cases?
 
-[**Meir**] : So you will need to upgrade to the lastest. Only on the lastest version we support those combination of models to get it like CLDT and such
+**Meir** : The first scenario in which we had only one index with many many document then it was distributed between the shots, yes.
 
-[**Audience 4**] : I already got 1.4 redislab
 
-[**Meir**] : No, it's on the preview only. So it's just was released yesterday and it was on preview only. So you need to wait and update it once it was released.
 
-[**Kyle**] : I want to add couple of things on that, We don't generally suggest that you mix multiple modules or other data a RedisSearch database, that's not great, You can do it, it wont return an error but it's not the best practice. So it's best to create another database. You can have it on the same cluster but you can run into some problems with some keys conflicting. So that's our best practice.
 
-[**Meir**] : Any other question?
 
-[**Audience 4**] : Is RedisSearch using multi-threaded model to do the search?
+**Audience 3** : About the search, is the levenshtein distance configurable?
 
-[**Meir**] : Yeah it's one behind with multi-threaded there's some limit because Redis do not provide run and read the data set in parallel thread, currently you need to query global log but there's some stuff that we can parallelize  and we are parallelizing them like the tokenization of the data and stuff like that, so we parallelize as much as we can and we hope that in the future we might be able to parallelize even more
+**Meir** : What? The Levenshtein distance? So it's not configurable but you can play with it, like if you put like between two percentage, like if you put two percentage that’ll distance 1, if you put more or if you put 2 on the both sides then it will be levenshtein distance on 2 and we also support levenshtein distance of 3, but not more than that, up to three. 
 
-[**Audience 4**] : So the aggregation part isn't running in parallel?
+**Audience 3** : Okay, and what you're using for the spell checking? Can you support phrases? I mean if two words are wrong on the phrase.
 
-[**Meir**] : Yeah, the aggregation part in the single shot isn't parallel but multi-shot do run in parallel.
+**Meir** : No, it’s a single word for the spell check.
+
+**Audience 3** : Thank you.
+
+
+
+
+**Audience 4** : Hi, in the example of CRDT, you added 5 and reduced 3 which is kind of unimportant, but what if you add 5 and multiply by 3 do you support those kinds of conflict solutions?
+
+**Meir** : There is no command for multiply in Redis, but you might ask what happen if I add three and then set another value. So you should have come to the previous lecture about CRDT and I would have answered all of your questions there. If you want to talk about person because it's like a long answer and maybe with some of you already have those answers. Basically it's conflict resolved so each data type solve the conflict differently. If you want to know a specific on how we handle conflicts in a specific data type then we can talk personally and I will explain to you.
+
+**Audience 4** : Okay.
+
+
+
+
+
+**Audience 5** : To the release database you have setup, is it exclusive to a search or you can also have the standard redis data structure, for example if you say "set my string to ABCD", will it give an error or ft.search? Right now I'm thinking if we already have a CRDT setted up, we just using it for standarting, If I want to ft.search do it is it possible?
+ 
+**Meir** : So I'll answer, it's possible to add a search to CRDT, but it’s not using a simple strings. So you must have your data in a hash in order for search to search on it and you must index the data [inaudible 40:26] like with the FTL command, so the RediSearch will know it's there and it will index the data. So you cannot index a simple string or a simple list. The data type that we support and provide is hashes. Is this answer okay? or you have more questions?
+
+**Audience 5** : (**mostly inaudible**) I understand that,Rightnow that every set already being used for a set of data, so I want to search a small thing in the synced data base
+
+**Meir** : So you have a database for CRDT?
+
+**Audience 5** : CRD database we already have, issues for example section cash.
+
+**Meir** : So you probably need to upgrade to, I mean I'm not sure you have enterprise
+
+**Audience 5** : Yes, yea, Redislab
+
+**Meir** : So you will need to upgrade to the lastest. Only on the lastest version we support those combination of models to get it like CLDT and such
+
+**Audience 5** : I already got 1.4 redislab
+
+**Meir** : No, it's on the preview only. So it's just was released yesterday and it was on preview only. So you need to wait and update it once it was released.
+
+**Kyle** : I want to add couple of things on that, We don't generally suggest that you mix multiple modules or other data a RedisSearch database, that's not great, You can do it, it wont return an error but it's not the best practice. So it's best to create another database. You can have it on the same cluster but you can run into some problems with some keys conflicting. So that's our best practice.
+
+
+
+
+
+**Meir** : Any other question?
+
+**Audience 6** : Is RedisSearch using multi-threaded model to do the search?
+
+**Meir** : Yeah it's one behind with multi-threaded there's some limit because Redis do not provide run and read the data set in parallel thread, currently you need to query global log but there's some stuff that we can parallelize  and we are parallelizing them like the tokenization of the data and stuff like that, so we parallelize as much as we can and we hope that in the future we might be able to parallelize even more
+
+**Audience 6** : So the aggregation part isn't running in parallel?
+
+**Meir** : Yeah, the aggregation part in the single shot isn't parallel but multi-shot do run in parallel.
 
 
 
