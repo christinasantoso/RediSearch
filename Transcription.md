@@ -398,7 +398,7 @@ Conflict Free Replicated Data-Types
 	- No need to coordinate with other parties in advance --> increases performance
 	- Waiting long enough, all parties state will be aligned --> strong eventual consistency
 ```
-![test](26:44.svg)
+![test](2644.svg)
 
 [**TRANSCRIPT**]
 
