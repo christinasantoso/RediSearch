@@ -294,9 +294,8 @@ And we got those research. So indexing, RediSearch indexes all the data in aroun
 [**SLIDE**] (21:36)
 ```
 RediSearch vs ElasticSearch - search of two words
-Diagram, gimana nulisnya?
 ```
-
+![test](2136.svg)
 [**TRANSCRIPT**]
 
 And then we compared the searching, the query, actually querying data and get results. So regarding throughput, RediSearch was-- could have gotten like 12,000 ops/second compared to ElasticSearch that could’ve done like 3,000, and the latency was almost the same, so RediSearch can do like four times faster than ElasticSearch regarding query time.
@@ -329,7 +328,7 @@ So what we did is we created 50,000 indexes with 500 documents in each index, to
 ```
 Multi-tenant Results
 ```
-![2253](2253.svg)
+![2253](2253new.svg)
 
 [**TRANSCRIPT**]
 
