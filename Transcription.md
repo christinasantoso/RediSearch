@@ -354,6 +354,7 @@ Setup
 + Client & Server - AWS c4.8xlarge (36 vCPU and 60GB RAM)
 ```
 ![2421](2421.svg)
+
 [**TRANSCRIPT**]
 
 So those are the machines that were used to compare to do the benchmark.
