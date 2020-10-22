@@ -328,8 +328,8 @@ So what we did is we created 50,000 indexes with 500 documents in each index, to
 [**SLIDE**] (22:53)
 ```
 Multi-tenant Results
-Diagram, gimana nulisnya?
 ```
+![2253](2253.svg)
 
 [**TRANSCRIPT**]
 
@@ -352,8 +352,8 @@ So we believe that the comparison and the differences is because: First, RediSea
 ```
 Setup
 + Client & Server - AWS c4.8xlarge (36 vCPU and 60GB RAM)
-Diagram, gimana nulisnya?
 ```
+![2421](2421.svg)
 [**TRANSCRIPT**]
 
 So those are the machines that were used to compare to do the benchmark.
@@ -420,12 +420,8 @@ RediSearch and CRDB (Redis CRDT) --> a Multi-site Active-Active search engine
 + CRDT replicates the Hash between the sites.
 + On Hash received, CRDT notifies RediSearch causing new data reindex.
 + Only after conflicts being resolved by CRDT, RediSearch is being notified.
-
-Ft.add idx doc name Danny --> [site 1] RediSearch <-- hset doc1 name Danny --> CRDT
-[site 2] RediSearch <-- notification on new data arrived --> CRDT
-Site 1 <--  replicating data to the other replica --> Site 2
-Diagram, gimana nulisnya?
 ```
+![2822](2822.svg)
 
 [**TRANSCRIPT**]
 
