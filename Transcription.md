@@ -265,7 +265,7 @@ So we took the wikipedia and wikipedia data set, it contains 5.6 million docs an
 
 [**SLIDE**] (21:09)
 ```
-**RediSearch vs ElasticSearch : indexing time**
+RediSearch vs ElasticSearch : indexing time
 ```
 
 ![test test](2109.svg)
